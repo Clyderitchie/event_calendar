@@ -26,33 +26,71 @@ $(function () {
 
 // Global Varaiables
 var renderDate = $('#currentDay');
-var renderTime = dayjs().format('hh:mm:ss a');
-var pastEl = $('.past');
-var presentEl = $('.present');
-var futureEl = $('.future');
-var timeNow = dayjs().format('hh:mm:ss a');
-var idTime = $('.time-block');
+// var renderTime = dayjs().format('hh:mm:ss a');
+var pastEl     = $('.past');
+var presentEl  = $('.present');
+var futureEl   = $('.future');
+
+var idTime     = $('.time-block');
 
 // Displays the current date in the header
 function currentDate() {
   var now = dayjs();
-  renderDate.text(now.format('dddd MMM, DD'));
+  renderDate.text(now.format('dddd MMM, DD, YYYY'));
 }
 currentDate();
 
 // Sets the class to either Past, Present, or Future depending on time of day
-function currentTime() {
-  var idEl = $('#hour-17');
-  idTime = dayjs(idEl);
-  if (timeNow.isBefore(idTime)) {
-    idEl.addClass('future');
-  } else if (timeNow.isSame(idTime)) {
-    idEl.addClass('present');
+// function currentTime() {
+//   var idEl = $('#hour-17');
+//   idTime = dayjs(idEl);
+//   if (timeNow.isBefore(idTime)) {
+//     idEl.addClass('future');
+//   } else if (timeNow.isSame(idTime)) {
+//     idEl.addClass('present');
+//   } else {
+//     idEl.addClass('past');
+//   }
+
+//   console.log(timeNow);
+// }
+
+// currentTime();
+
+
+// Getting elements by their ID and assigning to a variable
+var hour9El  = $('#hour-9');
+var hour10El = $('#hour-10');
+var hour11El = $('#hour-11');
+var hour12El = $('#hour-12');
+var hour13El = $('#hour-13');
+
+//Checks the current id against timeNow
+function checkTime() {
+  var timeNow    = dayjs().hour();
+  $('.time-block').each(function(){
+    var blockHour = parseInt($(this).attr('id').split('-')[1]);
+  if (blockHour < timeNow) {
+    $(this).removeClass('present');
+    $(this).removeClass('future');
+    $(this).addClass('past');
+  } else if (blockHour === timeNow) {
+    $(this).removeClass('past');
+    $(this).removeClass('future');
+    $(this).addClass('present');
   } else {
-    idEl.addClass('past');
-  }
-
-  console.log(timeNow);
+    $(this).removeClass('present');
+    $(this).removeClass('past');
+    $(this).addClass('future');
+  };
+  })
+  
 }
+checkTime();
+setInterval(checkTime, 1000);
 
-currentTime();
+$('.saveBtn').on('click', function() {
+  var hour = $(this).parent().attr('id');
+  var input = $(this).siblings('.description').val();
+  localStorage.setItem(hour, input);
+})
